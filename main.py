@@ -2,6 +2,7 @@ import enum
 from tkinter import *
 
 
+# sub class
 class DataOfEachGrid:
     PotentialChoices = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     currentChoice = 0
@@ -19,27 +20,53 @@ class DataOfEachGrid:
             self.flag = 1 == 0
 
 
+# globule variables
+groupOfEntry = []
+groupOfData = []
+
+
+# functions
 def readNumbers():
-    return 0
+    for row in range(0, 9):
+        groupOfData.append([])
+        for col in range(0, 9):
+            input = groupOfEntry[row][col].get()
+            dataOfCurrentGrid = None
+            if len(input) == 0:
+                dataOfCurrentGrid = DataOfEachGrid(0)
+            elif input.isnumeric() != True or int(input) > 9 or int(input) < 1:
+                print("Enter a number from 1 to 9")
+                return False
+            elif len(input) == 1 and input.isnumeric():
+                dataOfCurrentGrid = DataOfEachGrid(int(input))
+            groupOfData[row].append(dataOfCurrentGrid)
+    return True
 
 
+def printData():
+    for row in range(0, 9):
+        for col in range(0, 9):
+            print(str(groupOfData[x][y].numberInGrid), end = " ")
+
+
+def clicked():
+    if readNumbers():
+        printData()
+        # solve the number place problem
+    print("Clicked")
+
+
+# main start here
 window = Tk()
 window.title("Number place")
 window.geometry("300x300")
 
-grids = []
 for x in range(0, 9):
-    grids.append([])
+    groupOfEntry.append([])
     for y in range(0, 9):
         txt = Entry(window, width=3)
         txt.grid(column=x, row=y)
-        grids[x].append(txt)
-
-
-def clicked():
-    s = grids[0][0].get()
-    print(s)
-
+        groupOfEntry[x].append(txt)
 
 solveBtn = Button(window, text="Solve", command=clicked)
 solveBtn.grid(column=10, row=10)
