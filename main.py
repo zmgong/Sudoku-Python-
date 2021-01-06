@@ -1,6 +1,5 @@
 from tkinter import *
 
-
 # globule variables
 from DataOfEachGrid import DataOfEachGrid
 
@@ -31,8 +30,9 @@ def readNumbers():
 def printData():
     for row in range(0, 9):
         for col in range(0, 9):
-            print(groupOfData[row][col].numberInGrid, end = " ")
+            print(groupOfData[row][col].currentChoice, end=" ")
         print()
+    print()
 
 
 def clicked():
@@ -42,71 +42,60 @@ def clicked():
     print("Clicked")
     if basicBackTrack(0, 0):
         print("Solved")
-        for x in range(0, 9):
-            for y in range(0, 9):
-                setTextInput(groupOfEntry[x][y],
-                             str(groupOfData[x][y].currentChoice))
+        for row in range(0, 9):
+            for col in range(0, 9):
+                setTextInput(groupOfEntry[row][col],
+                             str(groupOfData[row][col].currentChoice))
+    else:
+        print("Failed")
 
 
 def setTextInput(entry, text):
-    entry.delete(0,"end")
+    entry.delete(0, "end")
     entry.insert(0, text)
 
 
 def contradictionCheck(row, col):
     for index in range(0, 9):
-        if index != row and groupOfData[x][col].currentChoice == groupOfData[row][col].currentChoice:
+        if index != row and groupOfData[index][col].currentChoice == groupOfData[row][col].currentChoice:
+            groupOfData[row][col].currentChoice = 0
             return False
-        if index != col and groupOfData[row][x].currentChoice == groupOfData[row][col].currentChoice:
+        if index != col and groupOfData[row][index].currentChoice == groupOfData[row][col].currentChoice:
+            groupOfData[row][col].currentChoice = 0
             return False
 
-    downRight_row = row + 1
-    downRight_col = col + 1
-    while 0 <= downRight_row <= 8 and 0 <= downRight_col <= 8:
-        if groupOfData[downRight_row][downRight_col].currentChoice == groupOfData[row][col].currentChoice:
-            return False
-        downRight_row = downRight_row + 1
-        downRight_col = downRight_col + 1
+    leftTop_row = int(row/3)*3
+    leftTop_col = int(col/3)*3
+    for incOnRow in range(0, 3):
+        for incOnCol in range(0, 3):
+            currentRow = leftTop_row + incOnRow
+            currentCol = leftTop_col + incOnCol
+            if currentRow == row and currentCol == col:
+                continue
+            elif groupOfData[currentRow][currentCol].currentChoice == groupOfData[row][col].currentChoice:
+                groupOfData[row][col].currentChoice = 0
+                return False
 
-    upRight_row = row - 1
-    upRight_col = col + 1
-    while 0 <= upRight_row <= 8 and 0 <= upRight_col <= 8:
-        if groupOfData[upRight_row][upRight_col].currentChoice == groupOfData[row][col].currentChoice:
-            return False
-        upRight_row = upRight_row - 1
-        upRight_col = upRight_col + 1
-
-    downLeft_row = row + 1
-    downLeft_col = col - 1
-    while 0 <= downLeft_row <= 8 and 0 <= downLeft_col <= 8:
-        if groupOfData[downLeft_row][downLeft_col].currentChoice == groupOfData[row][col].currentChoice:
-            return False
-        downLeft_row = downLeft_row + 1
-        downLeft_col = downLeft_col - 1
-
-    upLeft_row = row - 1
-    upLeft_col = col - 1
-    while 0 <= upLeft_row <= 8 and 0 <= upLeft_col <= 8:
-        if groupOfData[upLeft_row][upLeft_col].currentChoice == groupOfData[row][col].currentChoice:
-            return False
-        upLeft_row = upLeft_row - 1
-        upLeft_col = upLeft_col - 1
+    return True
 
 
 def basicBackTrack(row, col):
     if row == 8 and col == 9:
         return True
     if col == 9:
+        # print("col == 9")
         col = 0
         row = row + 1
-    if groupOfData[row][col].numberInGrid != 0:
+    if groupOfData[row][col].numberInGrid == 0:
         for currentTry in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+            printData()
             groupOfData[row][col].currentChoice = currentTry
             if contradictionCheck(row, col):
                 if basicBackTrack(row, col + 1):
                     return True
-
-
+    else:
+        if basicBackTrack(row, col + 1):
+            return True
 
 
 # main start here
