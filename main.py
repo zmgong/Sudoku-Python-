@@ -39,7 +39,7 @@ def clicked():
         printData()
         # solve the number place problem
     print("Clicked")
-    result = BackTrack.backTrackWithArcConsCheck(board)
+    result = BackTrack.backTrackWithForward(board)
     if result is False:
         print("Failed")
     else:
